@@ -1,0 +1,35 @@
+:root {
+  --accent-h: 218;
+  --accent-s: 100%;
+  --accent-l: 72%;
+  --color-primary: hsl(var(--accent-h) var(--accent-s) var(--accent-l));
+  --color-primary-dim: hsl(var(--accent-h) var(--accent-s) 58%);
+  --color-primary-bright: hsl(var(--accent-h) var(--accent-s) 82%);
+  --color-primary-glow: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .24);
+  --color-primary-soft: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .11);
+  --color-secondary-accent: #ff9375;
+  --color-bg-canvas: #080d18;
+  --color-bg-panel: rgba(15, 23, 39, .88);
+  --color-bg-panel-solid: #111a2a;
+  --color-bg-control: rgba(255,255,255,.045);
+  --color-bg-control-hover: rgba(255,255,255,.085);
+  --color-bg-control-active: var(--color-primary-soft);
+  --color-border-subtle: rgba(255,255,255,.07);
+  --color-border-default: rgba(255,255,255,.12);
+  --color-border-focus: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .58);
+  --color-text-primary: #f6f8fc;
+  --color-text-secondary: #aeb9ca;
+  --color-text-tertiary: #718096;
+  --color-text-disabled: #485467;
+  --color-text-accent: var(--color-primary);
+  --color-status-active: #5fe0b0;
+  --color-status-warning: #ffc86a;
+  --color-status-error: #ff7f82;
+  --color-status-inactive: #66758a;
+  --color-overlay-light: rgba(255,255,255,.035);
+  --color-overlay-medium: rgba(4,9,18,.68);
+  --color-overlay-heavy: rgba(4,9,18,.9);
+}
+[data-theme='green'] { --accent-h: 158; --accent-s: 67%; --accent-l: 59%; }
+[data-theme='purple'] { --accent-h: 267; --accent-s: 88%; --accent-l: 72%; }
+[data-theme='amber'] { --accent-h: 28; --accent-s: 100%; --accent-l: 68%; }

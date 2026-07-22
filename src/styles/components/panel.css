@@ -1,0 +1,15 @@
+.panel {
+  display: flex; flex-direction: column; gap: 16px; padding: 16px;
+  background: var(--color-bg-panel);
+  backdrop-filter: var(--blur-md) saturate(1.25);
+  -webkit-backdrop-filter: var(--blur-md) saturate(1.25);
+  border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), inset 0 1px rgba(255,255,255,.035);
+}
+.panel__header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 13px; border-bottom: 1px solid var(--color-border-subtle); }
+.panel__header > div { display: flex; flex-direction: column; }
+.panel__eyebrow { color: var(--color-primary); font-size: 8px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.panel__title { margin: 4px 0 0; font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--color-text-primary); letter-spacing: var(--letter-spacing-tight); }
+.panel__section { display: flex; flex-direction: column; gap: 9px; }
+.panel__section + .panel__section { padding-top: 16px; border-top: 1px solid var(--color-border-subtle); }
+.panel__section-title { margin: 0 0 2px; color: var(--color-text-tertiary); font-size: 9px; font-weight: 700; letter-spacing: var(--letter-spacing-wider); text-transform: uppercase; }

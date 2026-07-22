@@ -1,0 +1,27 @@
+:root {
+  --radius-none: 0;
+  --radius-sm: 7px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+  --shadow-none: none;
+  --shadow-sm: 0 4px 14px rgba(0,0,0,.2);
+  --shadow-md: 0 12px 32px rgba(0,0,0,.28);
+  --shadow-lg: 0 24px 70px rgba(0,0,0,.38);
+  --glow-sm: 0 0 12px var(--color-primary-glow);
+  --glow-md: 0 0 24px var(--color-primary-glow);
+  --glow-lg: 0 0 42px var(--color-primary-glow);
+  --blur-sm: blur(10px);
+  --blur-md: blur(22px);
+  --blur-lg: blur(30px);
+  --transition-fast: 140ms cubic-bezier(.2,.8,.2,1);
+  --transition-base: 220ms cubic-bezier(.2,.8,.2,1);
+  --transition-slow: 340ms cubic-bezier(.2,.8,.2,1);
+  --z-canvas: 0;
+  --z-ui-base: 100;
+  --z-panel: 200;
+  --z-control: 300;
+  --z-overlay: 400;
+  --z-modal: 500;
+  --z-debug: 1000;
+}

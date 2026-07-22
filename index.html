@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orbit — Spatial 3D Viewer</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <meta name="theme-color" content="#0a1020">
+
+  <!-- Fonts -->
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body>
+  <header class="spatial-topbar">
+    <div class="spatial-brand">
+      <span class="spatial-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <div><strong>ORBIT</strong><small>Spatial model viewer</small></div>
+    </div>
+    <div class="spatial-instruction"><span>Gesture workspace</span><b>Pinch to select · Move to rotate</b></div>
+    <div class="spatial-session"><span class="spatial-session__dot"></span><span>Local session</span></div>
+  </header>
+
+  <!-- 3D Canvas -->
+  <div class="app-canvas">
+    <canvas id="three-canvas"></canvas>
+  </div>
+
+  <!-- Drag & drop hint overlay -->
+  <div id="drop-overlay" class="drop-overlay" hidden>
+    <div class="drop-overlay__inner">Drop STL file to load</div>
+  </div>
+
+  <!-- Camera Feed with Hand Tracking Overlay (Bottom Right) -->
+  <div id="camera-feed-container" style="display: none;">
+    <video id="camera-video" autoplay playsinline muted></video>
+    <canvas id="hand-tracking-canvas"></canvas>
+  </div>
+
+  <!-- Control Panel (Left) -->
+  <div class="controls-panel">
+    <div class="panel">
+      <div class="panel__header">
+        <div><span class="panel__eyebrow">Workspace</span><h2 class="panel__title">Model controls</h2></div>
+        <button class="btn btn--icon btn--ghost" id="help-toggle" title="Keyboard shortcuts (?)">?</button>
+      </div>
+
+      <!-- Model Selection Section -->
+      <div class="panel__section">
+        <h3 class="panel__section-title">Model library</h3>
+        <div class="segmented" id="model-switcher">
+          <button class="segmented__item segmented__item--active" id="model-drone">Drone</button>
+          <button class="segmented__item" id="model-cube">Cube</button>
+          <button class="segmented__item" id="model-robot">Robot</button>
+          <button class="segmented__item" id="model-spacecraft">Ship</button>
+          <button class="segmented__item" id="model-pcb">PCB</button>
+        </div>
+        <button class="btn btn--ghost btn--block" id="model-upload">Import STL model</button>
+        <input type="file" id="stl-file-input" accept=".stl" hidden>
+      </div>
+
+      <!-- View Section -->
+      <div class="panel__section">
+        <h3 class="panel__section-title">Viewport</h3>
+        <div class="control-group">
+          <label class="control-group__label">Camera presets</label>
+          <div class="control-group__row">
+            <button class="btn btn--ghost btn--small" id="view-front">Front</button>
+            <button class="btn btn--ghost btn--small" id="view-top">Top</button>
+            <button class="btn btn--ghost btn--small" id="view-side">Side</button>
+            <button class="btn btn--ghost btn--small" id="view-iso">Iso</button>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-row__label">Grid</span>
+          <button class="switch" id="toggle-grid" role="switch" aria-checked="true" aria-label="Toggle grid"><span class="switch__thumb"></span></button>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-row__label">Axes</span>
+          <button class="switch" id="toggle-axes" role="switch" aria-checked="false" aria-label="Toggle axes"><span class="switch__thumb"></span></button>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-row__label">Wireframe</span>
+          <button class="switch" id="toggle-wireframe" role="switch" aria-checked="false" aria-label="Toggle wireframe"><span class="switch__thumb"></span></button>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-row__label">Auto-Rotate</span>
+          <button class="switch" id="toggle-autorotate" role="switch" aria-checked="false" aria-label="Toggle auto-rotate"><span class="switch__thumb"></span></button>
+        </div>
+        <div class="control-group__row">
+          <button class="btn btn--ghost btn--small" id="reset-camera">Reset view</button>
+          <button class="btn btn--ghost btn--small" id="screenshot">Capture</button>
+        </div>
+      </div>
+
+      <!-- Transform Section -->
+      <div class="panel__section">
+        <h3 class="panel__section-title">Object transform</h3>
+        <div class="control-group__row">
+          <button class="btn btn--ghost btn--small" id="reset-rotation">Rotation</button>
+          <button class="btn btn--ghost btn--small" id="reset-position">Position</button>
+          <button class="btn btn--ghost btn--small" id="reset-scale">Scale</button>
+        </div>
+        <button class="btn btn--primary btn--block" id="reset-all">Reset All</button>
+      </div>
+
+      <!-- Explode View Section -->
+      <div class="panel__section">
+        <h3 class="panel__section-title">Exploded view</h3>
+        <div class="slider">
+          <div class="slider__label">
+            <span>Separation</span>
+            <span class="slider__value" id="explode-value">0%</span>
+          </div>
+          <input type="range" class="slider__input" min="0" max="100" value="0" id="explode-slider">
+        </div>
+        <div class="slider">
+          <div class="slider__label">
+            <span>Speed</span>
+            <span class="slider__value" id="speed-value">1.0x</span>
+          </div>
+          <input type="range" class="slider__input" min="10" max="200" value="100" step="10" id="speed-slider">
+        </div>
+      </div>
+
+      <!-- Parts Section -->
+      <div class="panel__section">
+        <h3 class="panel__section-title">Assembly parts</h3>
+        <ul class="part-list" id="part-list"></ul>
+        <button class="btn btn--ghost btn--block" id="isolate-toggle">Isolate Selected</button>
+      </div>
+
+      <!-- Training Game Section -->
+      <div class="panel__section">
+        <h3 class="panel__section-title">Gesture practice</h3>
+        <button class="btn btn--primary btn--block" id="game-start">Start practice</button>
+        <div class="control-group__row">
+          <button class="btn btn--ghost btn--small" id="game-pause" style="display: none;">Pause</button>
+          <button class="btn btn--ghost btn--small" id="game-restart" style="display: none;">Restart</button>
+          <button class="btn btn--ghost btn--small" id="game-exit" style="display: none;">Exit</button>
+        </div>
+      </div>
+
+      <!-- Theme Section -->
+      <div class="panel__section">
+        <h3 class="panel__section-title">Interface accent</h3>
+        <div class="swatch-row" id="theme-switcher">
+          <button class="swatch swatch--cyan swatch--active" data-theme="cyan" aria-label="Cyan theme"></button>
+          <button class="swatch swatch--green" data-theme="green" aria-label="Green theme"></button>
+          <button class="swatch swatch--purple" data-theme="purple" aria-label="Purple theme"></button>
+          <button class="swatch swatch--amber" data-theme="amber" aria-label="Amber theme"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Panel (Top Right) -->
+  <div class="status-panel">
+    <div class="panel">
+      <div class="panel__header">
+        <div><span class="panel__eyebrow">Live telemetry</span><h2 class="panel__title">Session</h2></div>
+      </div>
+
+      <div class="status-panel__item">
+        <span class="label">Hand Tracking</span>
+        <div class="status-indicator" id="hand-tracking-status">
+          <span class="status-indicator__dot"></span>
+          <span id="hand-tracking-text">Inactive</span>
+        </div>
+      </div>
+
+      <div class="status-panel__item">
+        <span class="label">Selected</span>
+        <span class="value" id="status-selected">None</span>
+      </div>
+
+      <div class="status-panel__item">
+        <span class="label">Mode</span>
+        <span class="value" id="status-mode">Idle</span>
+      </div>
+
+      <div class="status-panel__item">
+        <span class="label">FPS</span>
+        <span class="value" id="status-fps">0</span>
+      </div>
+
+      <div class="status-panel__item">
+        <span class="label">Parts</span>
+        <span class="value" id="stats-parts">0</span>
+      </div>
+
+      <div class="status-panel__item">
+        <span class="label">Triangles</span>
+        <span class="value" id="stats-triangles">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Debug Overlay (Bottom Left, hidden by default) -->
+  <div class="debug-overlay" id="debug-overlay" style="display: none;">
+    <div class="panel">
+      <div class="panel__header">
+        <h2 class="panel__title">Debug</h2>
+      </div>
+
+      <div class="debug-overlay__row">
+        <span>Render FPS</span>
+        <span class="debug-overlay__value" id="debug-fps">0</span>
+      </div>
+
+      <div class="debug-overlay__row">
+        <span>State</span>
+        <span class="debug-overlay__value" id="debug-state">Idle</span>
+      </div>
+
+      <div class="debug-overlay__row">
+        <span>Gesture</span>
+        <span class="debug-overlay__value" id="debug-gesture">None</span>
+      </div>
+
+      <div class="debug-overlay__row">
+        <span>Confidence</span>
+        <span class="debug-overlay__value" id="debug-confidence">0%</span>
+      </div>
+
+      <div class="debug-overlay__row">
+        <span>Hands</span>
+        <span class="debug-overlay__value" id="debug-hands">0</span>
+      </div>
+
+      <div class="debug-overlay__row">
+        <span>Landmarks</span>
+        <span class="debug-overlay__value" id="debug-landmarks">0/21</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Overlay -->
+  <div class="help-overlay" id="help-overlay" style="display: none;">
+    <div class="panel help-overlay__panel">
+      <div class="panel__header">
+        <h2 class="panel__title">Keyboard Shortcuts</h2>
+        <button class="btn btn--icon btn--ghost" id="help-close" aria-label="Close help">✕</button>
+      </div>
+      <div class="help-overlay__grid">
+        <kbd>R</kbd><span>Reset selected part transform</span>
+        <kbd>C</kbd><span>Reset camera</span>
+        <kbd>E</kbd><span>Toggle explode view</span>
+        <kbd>I</kbd><span>Toggle part isolation</span>
+        <kbd>W</kbd><span>Toggle wireframe</span>
+        <kbd>G</kbd><span>Toggle grid</span>
+        <kbd>A</kbd><span>Toggle auto-rotate</span>
+        <kbd>D</kbd><span>Toggle debug panel</span>
+        <kbd>?</kbd><span>Toggle this help</span>
+      </div>
+      <div class="help-overlay__gestures">
+        <h3 class="panel__section-title">Gestures</h3>
+        <p>Point with index finger to hover. Pinch thumb + index to grab, then move to rotate. With two hands: left pinch + right pinch = rotate, right open palm = translate, right fist = scale.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game HUD (Top Center) -->
+  <div id="game-hud" class="game-hud" style="display: none;">
+    <div class="game-hud__stat">
+      <span class="game-hud__label">Score</span>
+      <span class="game-hud__value" id="game-score">0</span>
+    </div>
+    <div class="game-hud__stat">
+      <span class="game-hud__label">Level</span>
+      <span class="game-hud__value" id="game-level">1</span>
+    </div>
+    <div class="game-hud__stat">
+      <span class="game-hud__label">Shapes</span>
+      <span class="game-hud__value" id="game-remaining">0</span>
+    </div>
+  </div>
+
+  <!-- Game Message (Center Screen) -->
+  <div id="game-message" class="game-message" style="display: none;">
+    <div class="game-message__text" id="game-message-text"></div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

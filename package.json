@@ -1,0 +1,20 @@
+{
+  "name": "3d-hand-manipulation",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.9",
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.160.0",
+    "typescript": "^5.3.3",
+    "vite": "^8.1.5"
+  }
+}

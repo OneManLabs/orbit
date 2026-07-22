@@ -1,0 +1,80 @@
+.label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  line-height: var(--line-height-tight);
+}
+
+.label--inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+.status-indicator__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-status-inactive);
+  box-shadow: 0 0 8px currentColor;
+}
+
+.status-indicator--active .status-indicator__dot {
+  background: var(--color-status-active);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.status-indicator--warning .status-indicator__dot {
+  background: var(--color-status-warning);
+}
+
+.status-indicator--error .status-indicator__dot {
+  background: var(--color-status-error);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.control-group__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.control-group__row {
+  display: flex;
+  gap: var(--spacing-1);
+}
+
+.control-group__row .btn {
+  flex: 1;
+}
