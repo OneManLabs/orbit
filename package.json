@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mediapipe/tasks-vision": "^0.10.9",
+    "@mediapipe/tasks-vision": "^1.0.0",
     "three": "^0.160.0"
   },
   "devDependencies": {
